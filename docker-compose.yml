@@ -1,0 +1,87 @@
+services:
+  # ─── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: nyumbasasa_postgres
+    environment:
+      POSTGRES_DB:       nyumbasasa
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: nyumbasasa_redis
+    ports:
+      - "6379:6379"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ─── Backend ────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      network: host
+    container_name: nyumbasasa_backend
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      DATABASE_URL:           postgres://avnadmin:AVNS_WproZlJuj4dn5SKcZ33@pg-334f0ed5-gatitumwangi8-74f2.l.aivencloud.com:14374/defaultdb?sslmode=require
+      REDIS_URL:              redis://redis:6379
+      JWT_SECRET:             change-me-in-production-use-long-random-secret
+      JWT_ACCESS_EXPIRES:     1d
+      JWT_REFRESH_EXPIRES:    7d
+      PORT:                   3001
+      NODE_ENV:               production
+      FRONTEND_URL:           http://localhost:3000
+      CLOUDINARY_CLOUD_NAME:  ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY:     ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET:  ${CLOUDINARY_API_SECRET}
+    ports:
+      - "3001:3001"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # ─── Frontend ───────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      network: host
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3001/api
+    container_name: nyumbasasa_frontend
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:

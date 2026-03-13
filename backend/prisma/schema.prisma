@@ -1,0 +1,229 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// NyumbaSasa – Prisma Schema
+// Database: PostgreSQL
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  AGENT
+  USER
+}
+
+enum HouseType {
+  BEDSITTER
+  STUDIO
+  ONE_BEDROOM
+  TWO_BEDROOM
+  THREE_BEDROOM
+}
+
+enum ListingStatus {
+  PENDING    // awaiting admin verification
+  ACTIVE     // visible to public
+  ARCHIVED   // expired or manually archived
+  REJECTED   // failed verification
+}
+
+// ─── User ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  phone       String   @unique
+  password    String
+  role        UserRole @default(AGENT)
+  avatarUrl   String?
+  agencyName  String?
+  bio         String?
+  whatsapp    String?
+  verified    Boolean  @default(false)
+  active      Boolean  @default(true)
+
+  // Relations
+  listings    Property[]
+  reports     ListingReport[]
+  savedListings SavedListing[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// ─── Location hierarchy ───────────────────────────────────────────────────────
+
+model County {
+  id       String  @id @default(uuid())
+  name     String  @unique
+  slug     String  @unique
+  region   String
+  imageUrl String?
+
+  towns    Town[]
+  listings Property[]
+
+  @@index([slug])
+  @@map("counties")
+}
+
+model Town {
+  id       String @id @default(uuid())
+  name     String
+  slug     String
+  countyId String
+
+  county   County   @relation(fields: [countyId], references: [id], onDelete: Cascade)
+  estates  Estate[]
+  listings Property[]
+
+  @@unique([countyId, slug])
+  @@index([countyId])
+  @@map("towns")
+}
+
+model Estate {
+  id     String @id @default(uuid())
+  name   String
+  slug   String
+  townId String
+
+  town     Town       @relation(fields: [townId], references: [id], onDelete: Cascade)
+  listings Property[]
+
+  @@unique([townId, slug])
+  @@index([townId])
+  @@map("estates")
+}
+
+// ─── Property ─────────────────────────────────────────────────────────────────
+
+model Property {
+  id          String        @id @default(uuid())
+  title       String
+  description String        @db.Text
+  rent        Decimal       @db.Decimal(10, 2)
+  deposit     Decimal       @db.Decimal(10, 2)
+  houseType   HouseType
+  status      ListingStatus @default(PENDING)
+  isVerified  Boolean       @default(false)
+  isBoosted   Boolean       @default(false)
+  boostedUntil DateTime?
+
+  // Location
+  countyId    String
+  townId      String
+  estateId    String?
+  address     String?
+  latitude    Float?
+  longitude   Float?
+
+  // Meta
+  viewCount   Int       @default(0)
+  expiresAt   DateTime  @default(dbgenerated("NOW() + INTERVAL '30 days'"))
+  agentId     String
+
+  // Relations
+  county      County    @relation(fields: [countyId], references: [id])
+  town        Town      @relation(fields: [townId], references: [id])
+  estate      Estate?   @relation(fields: [estateId], references: [id])
+  agent       User      @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  images      PropertyImage[]
+  amenities   PropertyAmenity[]
+  reports     ListingReport[]
+  savedBy     SavedListing[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Indexes for search performance
+  @@index([status, countyId, houseType])
+  @@index([countyId, townId])
+  @@index([agentId])
+  @@index([rent])
+  @@index([createdAt(sort: Desc)])
+  @@index([expiresAt])
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         String   @id @default(uuid())
+  url        String
+  publicId   String   // Cloudinary public_id
+  isPrimary  Boolean  @default(false)
+  propertyId String
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("property_images")
+}
+
+// ─── Amenities ────────────────────────────────────────────────────────────────
+
+model Amenity {
+  id    String @id
+  label String
+  icon  String
+
+  properties PropertyAmenity[]
+
+  @@map("amenities")
+}
+
+model PropertyAmenity {
+  propertyId String
+  amenityId  String
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amenity    Amenity  @relation(fields: [amenityId], references: [id])
+
+  @@id([propertyId, amenityId])
+  @@map("property_amenities")
+}
+
+// ─── Reports ──────────────────────────────────────────────────────────────────
+
+model ListingReport {
+  id         String   @id @default(uuid())
+  propertyId String
+  reporterId String
+  reason     String
+  resolved   Boolean  @default(false)
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  reporter   User     @relation(fields: [reporterId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@index([propertyId])
+  @@map("listing_reports")
+}
+
+// ─── Saved Listings ───────────────────────────────────────────────────────────
+
+model SavedListing {
+  userId     String
+  propertyId String
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  savedAt    DateTime @default(now())
+
+  @@id([userId, propertyId])
+  @@map("saved_listings")
+}

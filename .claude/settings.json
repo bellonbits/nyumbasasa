@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/learn/AppData/Local/Temp/**)",
+      "Read(//c/Users/learn/AppData/Roaming/**)",
+      "Read(//c/Users/learn/AppData/**)"
+    ]
+  }
+}
