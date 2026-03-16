@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { ExpressAdapter } from "@nestjs/platform-express";
@@ -6,13 +5,23 @@ import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
 
-// Use require() for CJS modules to avoid ESM default-import issues on Vercel
-const express    = require("express");
-const helmet     = require("helmet");
-const compression = require("compression");
-const cookieParser = require("cookie-parser");
+// Safe CJS interop — works with tsc, webpack (ncc), and esbuild
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const expressModule = require("express");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const helmetModule = require("helmet");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const compressionModule = require("compression");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const cookieParserModule = require("cookie-parser");
 
-const server = express();
+// Handle both raw CJS export (express()) and wrapped ESM default (.default())
+const createApp   = typeof expressModule === "function" ? expressModule : expressModule.default;
+const helmetFn    = typeof helmetModule === "function"  ? helmetModule  : helmetModule.default;
+const compressFn  = typeof compressionModule === "function" ? compressionModule : compressionModule.default;
+const cookieFn    = typeof cookieParserModule === "function" ? cookieParserModule : cookieParserModule.default;
+
+const server  = createApp();
 const adapter = new ExpressAdapter(server);
 
 let cachedApp: any;
@@ -22,9 +31,9 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, adapter, { logger: false });
 
-  app.use(helmet.default ? helmet.default({ contentSecurityPolicy: false }) : helmet({ contentSecurityPolicy: false }));
-  app.use(compression());
-  app.use(cookieParser());
+  app.use(helmetFn({ contentSecurityPolicy: false }));
+  app.use(compressFn());
+  app.use(cookieFn());
 
   app.enableCors({
     origin: process.env.FRONTEND_URL ?? "*",
