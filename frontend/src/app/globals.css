@@ -16,7 +16,7 @@
   }
 
   body {
-    @apply bg-stone-50 text-gray-900 antialiased;
+    @apply bg-white text-gray-900 antialiased;
     font-family: 'Inter', system-ui, sans-serif;
   }
 
@@ -27,16 +27,16 @@
 
 @layer components {
   .section-label {
-    @apply text-brand-500 text-sm font-semibold tracking-widest uppercase;
+    @apply text-brand-500 text-xs font-bold tracking-[0.2em] uppercase;
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5;
   }
 
   .btn-primary {
     @apply bg-brand-500 hover:bg-brand-600 text-white font-semibold px-6 py-3 rounded-xl
-           transition-all duration-200 shadow-sm hover:shadow-md active:scale-95;
+           transition-all duration-200 shadow-sm hover:shadow-brand-500/25 hover:shadow-lg active:scale-95;
   }
 
   .btn-outline {
@@ -49,10 +49,62 @@
            focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent
            placeholder:text-gray-400 transition-all duration-200;
   }
+
+  .glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    @apply bg-white/10 border border-white/20;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-400 to-emerald-500 bg-clip-text text-transparent;
+  }
 }
 
+/* Keyframes */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Animation utility classes */
+.animate-fade-up {
+  animation: fadeUp 0.65s ease forwards;
+}
+.animate-fade-up-1 { animation: fadeUp 0.65s ease 0.1s forwards; opacity: 0; }
+.animate-fade-up-2 { animation: fadeUp 0.65s ease 0.22s forwards; opacity: 0; }
+.animate-fade-up-3 { animation: fadeUp 0.65s ease 0.36s forwards; opacity: 0; }
+.animate-float { animation: float 4s ease-in-out infinite; }
+
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { @apply bg-gray-100; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-full; }
 ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+
+/* Image skeleton loader */
+.img-skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}

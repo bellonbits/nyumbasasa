@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import HeroSection     from "@/components/home/HeroSection";
 import FeaturedListings from "@/components/home/FeaturedListings";
+import HowItWorks      from "@/components/home/HowItWorks";
 import AgentCTA        from "@/components/home/AgentCTA";
-import YouMightLike    from "@/components/home/YouMightLike";
-import BlogTeaser      from "@/components/home/BlogTeaser";
 import PopularCounties from "@/components/home/PopularCounties";
+import Testimonials    from "@/components/home/Testimonials";
+import BlogTeaser      from "@/components/home/BlogTeaser";
 
 export const metadata: Metadata = {
   title: "Homify Kenya – Find Affordable Homes in Kenya",
@@ -15,10 +16,11 @@ export default function HomePage() {
     <>
       <HeroSection />
       <FeaturedListings />
+      <HowItWorks />
       <AgentCTA />
-      <YouMightLike />
-      <BlogTeaser />
       <PopularCounties />
+      <Testimonials />
+      <BlogTeaser />
     </>
   );
 }

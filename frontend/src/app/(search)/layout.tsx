@@ -5,7 +5,8 @@ export default function SearchGroupLayout({ children }: { children: React.ReactN
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <Navbar />
-      <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
+      {/* pt-16 offsets the fixed navbar (h-16 = 64px) */}
+      <main className="flex-1 flex flex-col overflow-hidden pt-16">{children}</main>
     </div>
   );
 }
