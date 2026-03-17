@@ -19,7 +19,7 @@ export default function FeaturedListings() {
   const [activeTab, setActiveTab] = useState("");
 
   const filtered = (properties ?? []).filter(
-    (p) => !activeTab || p.houseType === activeTab
+    (p) => !activeTab || p.houseType.toLowerCase() === activeTab
   );
 
   return (

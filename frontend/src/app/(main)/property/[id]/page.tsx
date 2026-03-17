@@ -149,24 +149,24 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     <>
       {reportOpen && <ReportModal propertyId={property.id} onClose={() => setReportOpen(false)} />}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 lg:pb-8">
         {/* Breadcrumb */}
-        <nav className="text-sm text-gray-400 mb-6 flex items-center gap-2">
-          <Link href="/" className="hover:text-brand-500">Home</Link>
+        <nav className="text-sm text-gray-400 mb-6 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap scrollbar-hide">
+          <Link href="/" className="hover:text-brand-500 flex-shrink-0">Home</Link>
           <span>/</span>
-          <Link href="/search" className="hover:text-brand-500">Properties</Link>
+          <Link href="/search" className="hover:text-brand-500 flex-shrink-0">Properties</Link>
           <span>/</span>
-          <Link href={`/search?county=${property.county.name}`} className="hover:text-brand-500">
+          <Link href={`/search?county=${property.county.name}`} className="hover:text-brand-500 flex-shrink-0">
             {property.county.name}
           </Link>
           <span>/</span>
-          <span className="text-gray-600 truncate max-w-48">{property.title}</span>
+          <span className="text-gray-600 truncate">{property.title}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 
           {/* Left – Images + Details */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 lg:space-y-8">
             <ImageGallery images={property.images} />
 
             {/* Title bar */}
@@ -207,6 +207,32 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               </div>
             </div>
 
+            {/* Mobile-only price summary */}
+            <div className="lg:hidden bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+              <div className="flex items-end justify-between mb-3">
+                <div>
+                  <p className="text-xs text-gray-400 mb-0.5">Monthly Rent</p>
+                  <p className="font-bold text-2xl text-brand-500">
+                    {formatKES(property.rent)}<span className="text-gray-400 text-sm font-normal">/mo</span>
+                  </p>
+                </div>
+                <p className="text-sm text-gray-500">Deposit: <span className="font-semibold text-gray-700">{formatKES(property.deposit)}</span></p>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm bg-gray-50 rounded-xl p-3">
+                {[
+                  { label: "County", value: property.county.name },
+                  { label: "Town",   value: property.town.name   },
+                  { label: "Type",   value: houseTypeLabel(property.houseType) },
+                  { label: "Estate", value: property.estate?.name ?? "N/A" },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <span className="text-gray-400 text-xs">{label}</span>
+                    <p className="font-medium text-gray-800 text-xs">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Description */}
             <div>
               <h2 className="font-heading font-bold text-gray-900 text-lg mb-3">About This Property</h2>
@@ -229,7 +255,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             )}
 
             {/* Meta */}
-            <div className="flex items-center gap-6 text-sm text-gray-400 py-4 border-t border-gray-100">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 py-4 border-t border-gray-100">
               <div className="flex items-center gap-1.5">
                 <Eye className="w-4 h-4" /> {property.viewCount} views
               </div>
@@ -243,8 +269,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             </div>
           </div>
 
-          {/* Right – Price + Contact */}
-          <div className="space-y-5">
+          {/* Right – Price + Contact (hidden on mobile — shown via sticky bar) */}
+          <div className="space-y-5 hidden lg:block">
 
             {/* Price card */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -312,6 +338,33 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ── Mobile sticky bottom bar ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-gray-400 leading-none mb-0.5">Monthly Rent</p>
+            <p className="font-bold text-brand-500 text-lg leading-none">
+              {formatKES(property.rent)}<span className="text-gray-400 text-xs font-normal">/mo</span>
+            </p>
+          </div>
+          <a
+            href={`tel:${property.agent.phone}`}
+            className="flex items-center justify-center border border-brand-500 text-brand-500 font-semibold text-sm px-4 py-2.5 rounded-xl"
+          >
+            Call
+          </a>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-colors shadow-md"
+          >
+            <MessageCircle className="w-4 h-4" />
+            WhatsApp
+          </a>
         </div>
       </div>
     </>

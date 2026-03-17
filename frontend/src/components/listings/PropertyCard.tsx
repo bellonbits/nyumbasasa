@@ -6,12 +6,15 @@ import type { Property } from "@/types";
 
 const BEDS: Record<string, string> = {
   bedsitter: "1", studio: "1", one_bedroom: "1", two_bedroom: "2", three_bedroom: "3",
+  BEDSITTER: "1", STUDIO: "1", ONE_BEDROOM: "1", TWO_BEDROOM: "2", THREE_BEDROOM: "3",
 };
 const BATHS: Record<string, string> = {
   bedsitter: "1", studio: "1", one_bedroom: "1", two_bedroom: "2", three_bedroom: "2",
+  BEDSITTER: "1", STUDIO: "1", ONE_BEDROOM: "1", TWO_BEDROOM: "2", THREE_BEDROOM: "2",
 };
 const AREA: Record<string, string> = {
   bedsitter: "25", studio: "38", one_bedroom: "55", two_bedroom: "80", three_bedroom: "115",
+  BEDSITTER: "25", STUDIO: "38", ONE_BEDROOM: "55", TWO_BEDROOM: "80", THREE_BEDROOM: "115",
 };
 
 interface PropertyCardProps {

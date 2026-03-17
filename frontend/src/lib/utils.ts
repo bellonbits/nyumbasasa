@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 import type { HouseType } from "@/types";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,15 +15,15 @@ export function formatKES(amount: number): string {
   }).format(amount);
 }
 
-export function houseTypeLabel(type: HouseType): string {
-  const labels: Record<HouseType, string> = {
-    bedsitter:    "Bedsitter",
-    studio:       "Studio",
-    one_bedroom:  "1 Bedroom",
-    two_bedroom:  "2 Bedrooms",
-    three_bedroom:"3 Bedrooms",
+export function houseTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    bedsitter:     "Bedsitter",
+    studio:        "Studio",
+    one_bedroom:   "1 Bedroom",
+    two_bedroom:   "2 Bedrooms",
+    three_bedroom: "3 Bedrooms",
   };
-  return labels[type] ?? type;
+  return labels[type.toLowerCase()] ?? type;
 }
 
 export function buildWhatsAppLink(phone: string, propertyTitle: string): string {
