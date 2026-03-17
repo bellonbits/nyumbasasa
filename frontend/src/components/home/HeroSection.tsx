@@ -138,12 +138,12 @@ export default function HeroSection() {
           <div className="bg-white rounded-2xl shadow-2xl shadow-black/30 mb-10 w-full max-w-2xl animate-fade-up-3 overflow-hidden">
 
             {/* Inputs row */}
-            <div className="flex flex-col sm:flex-row">
+            <div className="flex items-stretch">
               {/* Location */}
-              <div className="flex items-center gap-3 flex-1 px-5 py-4 border-b sm:border-b-0 sm:border-r border-gray-100">
+              <div className="flex items-center gap-2.5 flex-1 px-4 py-3 border-r border-gray-100">
                 <MapPin className="w-4 h-4 text-brand-500 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest mb-0.5">Location</p>
+                  <p className="text-[9px] font-bold text-brand-500 uppercase tracking-widest mb-0.5">Location</p>
                   <input
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
@@ -155,10 +155,10 @@ export default function HeroSection() {
               </div>
 
               {/* Type */}
-              <div className="flex items-center gap-3 px-5 py-4 border-b sm:border-b-0 sm:border-r border-gray-100 sm:min-w-[180px]">
+              <div className="flex items-center gap-2.5 px-4 py-3 border-r border-gray-100 min-w-[160px]">
                 <Building2 className="w-4 h-4 text-brand-500 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest mb-0.5">Property Type</p>
+                  <p className="text-[9px] font-bold text-brand-500 uppercase tracking-widest mb-0.5">Property Type</p>
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
@@ -172,7 +172,7 @@ export default function HeroSection() {
               {/* Search button */}
               <button
                 onClick={handleSearch}
-                className="flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-bold text-sm px-8 py-4 transition-all active:scale-[0.98] whitespace-nowrap"
+                className="flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-bold text-sm px-6 transition-all active:scale-[0.98] whitespace-nowrap"
               >
                 <Search className="w-4 h-4" />
                 <span>Search</span>
@@ -180,7 +180,7 @@ export default function HeroSection() {
             </div>
 
             {/* Quick filters */}
-            <div className="flex items-center gap-2 px-4 py-2.5 border-t border-gray-50 bg-gray-50/50 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-2 px-4 py-2 border-t border-gray-100 bg-gray-50/60 overflow-x-auto scrollbar-hide">
               <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider whitespace-nowrap flex-shrink-0 flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> Popular
               </span>
