@@ -13,7 +13,7 @@ export class DashboardController {
 
   @Get("stats")
   @ApiOperation({ summary: "Get agent stats" })
-  async stats(@CurrentUser("sub") agentId: string) {
+  async stats(@CurrentUser("id") agentId: string) {
     const data = await this.dashboardService.getStats(agentId);
     return { success: true, data };
   }
@@ -21,7 +21,7 @@ export class DashboardController {
   @Get("listings")
   @ApiOperation({ summary: "Get agent listings with pagination" })
   async myListings(
-    @CurrentUser("sub") agentId: string,
+    @CurrentUser("id") agentId: string,
     @Query("page") page = "1",
     @Query("limit") limit = "10",
   ) {

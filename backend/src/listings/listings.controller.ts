@@ -42,7 +42,7 @@ export class ListingsController {
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FilesInterceptor("images", 8))
   async create(
-    @CurrentUser("sub") agentId: string,
+    @CurrentUser("id") agentId: string,
     @Body() dto: CreateListingDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
@@ -58,7 +58,7 @@ export class ListingsController {
   @UseInterceptors(FilesInterceptor("images", 8))
   async update(
     @Param("id") id: string,
-    @CurrentUser("sub") agentId: string,
+    @CurrentUser("id") agentId: string,
     @CurrentUser("role") role: string,
     @Body() dto: CreateListingDto,
     @UploadedFiles() files: Express.Multer.File[],
@@ -73,7 +73,7 @@ export class ListingsController {
   @HttpCode(HttpStatus.OK)
   async delete(
     @Param("id") id: string,
-    @CurrentUser("sub") agentId: string,
+    @CurrentUser("id") agentId: string,
     @CurrentUser("role") role: string,
   ) {
     const data = await this.listingsService.delete(id, agentId, role);
@@ -93,7 +93,7 @@ export class ListingsController {
   @HttpCode(HttpStatus.OK)
   async report(
     @Param("id") id: string,
-    @CurrentUser("sub") reporterId: string,
+    @CurrentUser("id") reporterId: string,
     @Body("reason") reason: string,
   ) {
     const data = await this.listingsService.report(id, reporterId, reason);

@@ -31,7 +31,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get current user profile" })
-  async me(@CurrentUser("sub") userId: string) {
+  async me(@CurrentUser("id") userId: string) {
     const data = await this.authService.getMe(userId);
     return { success: true, data };
   }
@@ -41,7 +41,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "Update current user profile" })
   async updateProfile(
-    @CurrentUser("sub") userId: string,
+    @CurrentUser("id") userId: string,
     @Body() dto: { name?: string; phone?: string; agencyName?: string },
   ) {
     const data = await this.authService.updateProfile(userId, dto);
@@ -54,7 +54,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Change current user password" })
   async changePassword(
-    @CurrentUser("sub") userId: string,
+    @CurrentUser("id") userId: string,
     @Body() dto: { currentPassword: string; newPassword: string },
   ) {
     const data = await this.authService.changePassword(userId, dto.currentPassword, dto.newPassword);
