@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import {
   Building2, Eye, TrendingUp, AlertCircle, PlusCircle,
@@ -10,6 +11,8 @@ import {
 import { dashboardApi } from "@/lib/api";
 import { useMyListings } from "@/hooks/useProperties";
 import PropertyCard from "@/components/listings/PropertyCard";
+
+const DashboardMap = dynamic(() => import("@/components/dashboard/DashboardMap"), { ssr: false });
 
 // ── Stat card — black circle icon + giant number ──────────────────────────────
 function StatCard({
@@ -122,37 +125,12 @@ export default function DashboardPage() {
       {/* ── Top row: stats + property hero ───────────────── */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-5">
 
-        {/* Property hero card */}
+        {/* Map card */}
         <div className="xl:col-span-2 relative rounded-2xl overflow-hidden h-64 xl:h-auto min-h-[240px] bg-surface-muted shadow-card">
-          <Image
-            src="https://willstonehomes.ke/wp-content/uploads/2025/02/DJI_0661-1-1-scaled.jpg"
-            alt="Featured property"
-            fill
-            className="object-cover"
-            sizes="(max-width:1280px) 100vw, 40vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <DashboardMap listings={listingsData?.data ?? []} />
 
-          {/* Map pin badges */}
-          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2">
-            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
-              {stats?.activeListings ?? 10}
-            </div>
-          </div>
-          <div className="absolute top-[55%] left-[60%]">
-            <div className="w-9 h-9 bg-brand-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
-              {stats?.totalListings ?? 72}
-            </div>
-          </div>
-
-          {/* Address */}
-          <div className="absolute top-5 right-5 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-card text-right">
-            <p className="text-xs font-bold text-ink leading-snug">My Listings</p>
-            <p className="text-[11px] text-ink-muted">Nairobi, Kenya</p>
-          </div>
-
-          {/* Bottom badge */}
-          <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-card">
+          {/* Bottom badge — sits on top of map */}
+          <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-card pointer-events-none">
             <MapPin className="w-3.5 h-3.5 text-brand-500" />
             <span className="text-xs font-semibold text-ink">Active in {stats?.activeListings ?? 0} locations</span>
           </div>

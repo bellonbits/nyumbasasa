@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   ArrowLeft, Edit2, Trash2, Eye, MapPin, Calendar, Clock,
   CheckCircle2, XCircle, AlertCircle, Zap, Building2, Loader2,
@@ -12,6 +13,8 @@ import { formatKES, houseTypeLabel, timeAgo, getPrimaryImage } from "@/lib/utils
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { ListingStatus } from "@/types";
+
+const PropertyMap = dynamic(() => import("@/components/listings/PropertyMap"), { ssr: false });
 
 const STATUS_CONFIG: Record<ListingStatus, { label: string; icon: typeof CheckCircle2; className: string }> = {
   active:   { label: "Active",   icon: CheckCircle2, className: "bg-green-50 text-green-700 border-green-200"  },
@@ -158,6 +161,18 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
                   </span>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Map + Directions */}
+          {property.latitude != null && property.longitude != null && (
+            <div className="bg-white rounded-2xl border border-gray-100 p-5">
+              <h2 className="font-semibold text-gray-900 mb-4">Location &amp; Directions</h2>
+              <PropertyMap
+                lat={property.latitude}
+                lng={property.longitude}
+                title={property.title}
+              />
             </div>
           )}
         </div>

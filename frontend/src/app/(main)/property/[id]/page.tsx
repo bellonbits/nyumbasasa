@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   MapPin, Bed, BadgeCheck, MessageCircle, Flag, Share2,
   Heart, ChevronLeft, ChevronRight, Eye, Calendar, Loader2,
@@ -11,6 +12,8 @@ import { useProperty } from "@/hooks/useProperties";
 import { propertiesApi } from "@/lib/api";
 import { formatKES, houseTypeLabel, buildWhatsAppLink, timeAgo, getPrimaryImage } from "@/lib/utils";
 import type { Property } from "@/types";
+
+const PropertyMap = dynamic(() => import("@/components/listings/PropertyMap"), { ssr: false });
 
 const AMENITY_ICONS: Record<string, string> = {
   wifi: "📶", water: "💧", security: "🔒", parking: "🚗",
@@ -254,6 +257,18 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Map + Directions */}
+            {property.latitude != null && property.longitude != null && (
+              <div>
+                <h2 className="font-bold text-ink text-lg mb-4">Location &amp; Directions</h2>
+                <PropertyMap
+                  lat={property.latitude}
+                  lng={property.longitude}
+                  title={property.title}
+                />
               </div>
             )}
 
