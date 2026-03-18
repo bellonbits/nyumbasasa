@@ -1,24 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Marker,
-  DirectionsRenderer,
-} from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker, DirectionsRenderer } from "@react-google-maps/api";
 import { Navigation, Car, Footprints, Bus, X, Loader2 } from "lucide-react";
-
-const LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
-
-const MAP_STYLES = [
-  { featureType: "poi",        elementType: "labels",           stylers: [{ visibility: "off" }] },
-  { featureType: "transit",    elementType: "labels.icon",      stylers: [{ visibility: "off" }] },
-  { featureType: "road",       elementType: "geometry",         stylers: [{ color: "#f5f5f5" }] },
-  { featureType: "road",       elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
-  { featureType: "water",      elementType: "geometry",         stylers: [{ color: "#e9e9e9" }] },
-  { featureType: "landscape",  elementType: "geometry",         stylers: [{ color: "#f5f5f5" }] },
-];
+import { GOOGLE_MAPS_LIBRARIES, MAP_STYLES } from "@/lib/googleMaps";
 
 type TravelMode = "DRIVING" | "WALKING" | "TRANSIT";
 
@@ -35,9 +20,9 @@ interface Props {
 }
 
 export default function PropertyMap({ lat, lng, title }: Props) {
-  const { isLoaded } = useJsApiLoader({
+  const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
-    libraries: LIBRARIES,
+    libraries: GOOGLE_MAPS_LIBRARIES,
   });
 
   const destination = { lat, lng };
@@ -62,8 +47,7 @@ export default function PropertyMap({ lat, lng, title }: Props) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const origin = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          const svc = new window.google.maps.DirectionsService();
-          svc.route(
+          new window.google.maps.DirectionsService().route(
             {
               origin,
               destination,
@@ -75,10 +59,7 @@ export default function PropertyMap({ lat, lng, title }: Props) {
                 setDirections(result);
                 const leg = result.routes[0]?.legs[0];
                 if (leg) {
-                  setRouteInfo({
-                    distance: leg.distance?.text ?? "",
-                    duration: leg.duration?.text ?? "",
-                  });
+                  setRouteInfo({ distance: leg.distance?.text ?? "", duration: leg.duration?.text ?? "" });
                 }
               } else {
                 setError("Could not find a route. Try a different travel mode.");
@@ -88,7 +69,7 @@ export default function PropertyMap({ lat, lng, title }: Props) {
         },
         () => {
           setLoading(false);
-          setError("Location access denied — please enable location permissions and try again.");
+          setError("Location access denied — please enable location permissions.");
         },
         { enableHighAccuracy: true, timeout: 10000 },
       );
@@ -100,18 +81,20 @@ export default function PropertyMap({ lat, lng, title }: Props) {
 
   const handleModeChange = (mode: TravelMode) => {
     setTravelMode(mode);
-    if (directions) fetchDirections(mode); // re-fetch with new mode
+    if (directions) fetchDirections(mode);
   };
 
-  const clearDirections = () => {
-    setDirections(null);
-    setRouteInfo(null);
-    setError(null);
-  };
+  if (loadError) {
+    return (
+      <div className="w-full h-72 flex items-center justify-center bg-surface-muted rounded-2xl text-sm text-ink-muted">
+        Map could not be loaded
+      </div>
+    );
+  }
 
   if (!isLoaded) {
     return (
-      <div className="w-full h-64 flex items-center justify-center bg-surface-muted rounded-2xl">
+      <div className="w-full h-72 flex items-center justify-center bg-surface-muted rounded-2xl">
         <Loader2 className="w-6 h-6 text-brand-500 animate-spin" />
       </div>
     );
@@ -119,9 +102,8 @@ export default function PropertyMap({ lat, lng, title }: Props) {
 
   return (
     <div className="space-y-3">
-      {/* ── Controls ──────────────────────────────────────────── */}
+      {/* ── Controls ─────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* Travel mode tabs */}
         <div className="flex items-center gap-1 bg-surface rounded-xl border border-surface-border p-1">
           {MODES.map(({ mode, label, Icon }) => (
             <button
@@ -139,38 +121,31 @@ export default function PropertyMap({ lat, lng, title }: Props) {
           ))}
         </div>
 
-        {/* Get Directions button */}
         <button
           onClick={handleGetDirections}
           disabled={loading}
           className="flex items-center gap-2 btn-primary text-sm py-2 disabled:opacity-60"
         >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Navigation className="w-4 h-4" />
-          )}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Navigation className="w-4 h-4" />}
           {loading ? "Getting route…" : "Get Directions"}
         </button>
 
-        {/* Clear button */}
         {directions && (
           <button
-            onClick={clearDirections}
+            onClick={() => { setDirections(null); setRouteInfo(null); setError(null); }}
             className="flex items-center gap-1 text-xs text-ink-muted hover:text-ink transition-colors"
           >
-            <X className="w-3.5 h-3.5" /> Clear route
+            <X className="w-3.5 h-3.5" /> Clear
           </button>
         )}
       </div>
 
-      {/* ── Route summary banner ──────────────────────────────── */}
+      {/* ── Route summary ────────────────────────── */}
       {routeInfo && (
         <div className="flex items-center gap-4 bg-brand-50 border border-brand-200 rounded-xl px-4 py-3 text-sm">
-          <div className="flex items-center gap-1.5 text-brand-700 font-semibold">
-            <Navigation className="w-4 h-4" />
-            {routeInfo.duration}
-          </div>
+          <span className="flex items-center gap-1.5 text-brand-700 font-semibold">
+            <Navigation className="w-4 h-4" /> {routeInfo.duration}
+          </span>
           <span className="text-brand-400">·</span>
           <span className="text-brand-600">{routeInfo.distance}</span>
           <span className="text-brand-400 text-xs ml-auto">
@@ -179,15 +154,14 @@ export default function PropertyMap({ lat, lng, title }: Props) {
         </div>
       )}
 
-      {/* ── Error ────────────────────────────────────────────── */}
+      {/* ── Error ────────────────────────────────── */}
       {error && (
         <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">
-          <X className="w-4 h-4 flex-shrink-0" />
-          {error}
+          <X className="w-4 h-4 flex-shrink-0" /> {error}
         </div>
       )}
 
-      {/* ── Map ──────────────────────────────────────────────── */}
+      {/* ── Map ──────────────────────────────────── */}
       <GoogleMap
         mapContainerClassName="w-full h-72 sm:h-80 rounded-2xl"
         center={destination}
@@ -201,19 +175,17 @@ export default function PropertyMap({ lat, lng, title }: Props) {
           gestureHandling: "cooperative",
         }}
       >
-        {/* Property pin — only shown when there are no directions (directions renderer draws its own) */}
         {!directions && (
           <Marker
             position={destination}
             title={title}
             icon={{
-              path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
+              path: window.google.maps.SymbolPath.CIRCLE,
               fillColor: "#0057ff",
               fillOpacity: 1,
               strokeColor: "#ffffff",
               strokeWeight: 2,
-              scale: 1.8,
-              anchor: new window.google.maps.Point(12, 22),
+              scale: 10,
             }}
           />
         )}
@@ -223,21 +195,19 @@ export default function PropertyMap({ lat, lng, title }: Props) {
             directions={directions}
             options={{
               polylineOptions: { strokeColor: "#0057ff", strokeWeight: 5, strokeOpacity: 0.85 },
-              suppressMarkers: false,
             }}
           />
         )}
       </GoogleMap>
 
-      {/* ── Open in Google Maps link ──────────────────────────── */}
+      {/* ── Open in Google Maps ───────────────────── */}
       <a
         href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=${travelMode.toLowerCase()}`}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-1.5 text-xs text-ink-faint hover:text-brand-500 transition-colors w-fit"
       >
-        <Navigation className="w-3.5 h-3.5" />
-        Open in Google Maps
+        <Navigation className="w-3.5 h-3.5" /> Open in Google Maps
       </a>
     </div>
   );
