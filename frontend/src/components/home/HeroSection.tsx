@@ -82,8 +82,8 @@ export default function HeroSection() {
       ))}
 
       {/* Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/65 to-black/35" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
 
       {/* Trust badge */}
       <div className="absolute top-24 right-6 hidden lg:flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold px-4 py-2.5 rounded-full animate-float">

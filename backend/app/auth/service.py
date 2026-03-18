@@ -17,7 +17,7 @@ def _safe(user) -> dict:
         "name": user.name,
         "email": user.email,
         "phone": user.phone,
-        "role": user.role if isinstance(user.role, str) else user.role if isinstance(user.role, str) else user.role.value,
+        "role": user.role if isinstance(user.role, str) else user.role.value,
         "agencyName": user.agencyName,
         "bio": user.bio,
         "verified": user.verified,

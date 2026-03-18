@@ -73,7 +73,7 @@ const config: Config = {
       backgroundImage: {
         "hero-gradient":   "linear-gradient(160deg, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.20) 100%)",
         "brand-gradient":  "linear-gradient(135deg, #0057ff 0%, #003ecc 100%)",
-        "card-gradient":   "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.65) 100%)",
+        "card-gradient":   "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.82) 100%)",
       },
       keyframes: {
         "accordion-down": {

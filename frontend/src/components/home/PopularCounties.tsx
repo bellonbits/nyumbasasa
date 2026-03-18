@@ -52,7 +52,7 @@ export default function PopularCounties() {
                 sizes={i === 0 ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
               />
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent group-hover:from-black/85 transition-all duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 group-hover:from-black/95 transition-all duration-300" />
 
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-4">

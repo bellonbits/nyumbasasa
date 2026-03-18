@@ -27,3 +27,4 @@ docker-compose.override.yml
 backend/app/**/__pycache__
 backend/**/__pycache__
 backend/create_admin.py
+.vercel
