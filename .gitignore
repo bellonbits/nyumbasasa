@@ -24,3 +24,6 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 .claude/settings.local.json
+backend/app/**/__pycache__
+backend/**/__pycache__
+backend/create_admin.py

@@ -32,28 +32,37 @@ export default function FilterSidebar({ className }: FilterSidebarProps) {
     router.push("/search");
   };
 
-  const selectClass = "w-full input-base text-sm";
   const SectionTitle = ({ label }: { label: string }) => (
-    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{label}</h4>
+    <h4 className="text-[10px] font-bold text-ink-faint uppercase tracking-widest mb-3">{label}</h4>
   );
 
   return (
-    <aside className={cn("bg-white rounded-2xl border border-gray-100 shadow-sm p-6", className)}>
+    <aside className={cn("bg-white rounded-2xl border border-surface-border shadow-card p-6", className)}>
+
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-5 h-5 text-brand-500" />
-          <h3 className="font-bold text-gray-900">Filters</h3>
+          <SlidersHorizontal className="w-4 h-4 text-brand-500" />
+          <h3 className="font-bold text-ink text-sm">Filters</h3>
         </div>
-        <button onClick={reset} className="text-xs text-gray-400 hover:text-brand-500 flex items-center gap-1 transition-colors">
+        <button
+          onClick={reset}
+          className="text-xs text-ink-faint hover:text-red-500 flex items-center gap-1 transition-colors"
+        >
           <X className="w-3.5 h-3.5" /> Clear all
         </button>
       </div>
 
       <div className="space-y-6">
+
         {/* County */}
         <div>
           <SectionTitle label="County" />
-          <select value={county} onChange={(e) => setCounty(e.target.value)} className={selectClass}>
+          <select
+            value={county}
+            onChange={(e) => setCounty(e.target.value)}
+            className="input-base text-sm"
+          >
             <option value="">All Counties</option>
             {KENYA_COUNTIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -62,7 +71,7 @@ export default function FilterSidebar({ className }: FilterSidebarProps) {
         {/* House Type */}
         <div>
           <SectionTitle label="House Type" />
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {HOUSE_TYPES.map((t) => (
               <label key={t.value} className="flex items-center gap-3 cursor-pointer group">
                 <input
@@ -71,13 +80,18 @@ export default function FilterSidebar({ className }: FilterSidebarProps) {
                   value={t.value}
                   checked={houseType === t.value}
                   onChange={() => setHouseType(t.value)}
-                  className="w-4 h-4 text-brand-500 border-gray-300 focus:ring-brand-400"
+                  className="w-4 h-4 accent-brand-500 border-surface-border"
                 />
-                <span className="text-sm text-gray-700 group-hover:text-brand-500 transition-colors">{t.label}</span>
+                <span className="text-sm text-ink-muted group-hover:text-brand-600 transition-colors">
+                  {t.label}
+                </span>
               </label>
             ))}
             {houseType && (
-              <button onClick={() => setHouseType("")} className="text-xs text-gray-400 hover:text-brand-500 mt-1">
+              <button
+                onClick={() => setHouseType("")}
+                className="text-xs text-ink-faint hover:text-brand-500 mt-1 transition-colors"
+              >
                 Clear selection
               </button>
             )}
@@ -87,7 +101,7 @@ export default function FilterSidebar({ className }: FilterSidebarProps) {
         {/* Budget Range */}
         <div>
           <SectionTitle label="Budget (KES/month)" />
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {BUDGET_RANGES.map((r, i) => (
               <label key={i} className="flex items-center gap-3 cursor-pointer group">
                 <input
@@ -95,9 +109,11 @@ export default function FilterSidebar({ className }: FilterSidebarProps) {
                   name="budget"
                   checked={minRent === String(r.min) && maxRent === String(r.max)}
                   onChange={() => { setMinRent(String(r.min)); setMaxRent(String(r.max)); }}
-                  className="w-4 h-4 text-brand-500 border-gray-300 focus:ring-brand-400"
+                  className="w-4 h-4 accent-brand-500 border-surface-border"
                 />
-                <span className="text-sm text-gray-700 group-hover:text-brand-500 transition-colors">{r.label}</span>
+                <span className="text-sm text-ink-muted group-hover:text-brand-600 transition-colors">
+                  {r.label}
+                </span>
               </label>
             ))}
           </div>
@@ -108,20 +124,30 @@ export default function FilterSidebar({ className }: FilterSidebarProps) {
           <SectionTitle label="Custom Range" />
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">Min (KES)</label>
-              <input type="number" value={minRent} onChange={(e) => setMinRent(e.target.value)}
-                placeholder="0" className={selectClass} />
+              <label className="text-xs text-ink-faint mb-1 block">Min (KES)</label>
+              <input
+                type="number"
+                value={minRent}
+                onChange={(e) => setMinRent(e.target.value)}
+                placeholder="0"
+                className="input-base text-sm"
+              />
             </div>
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">Max (KES)</label>
-              <input type="number" value={maxRent} onChange={(e) => setMaxRent(e.target.value)}
-                placeholder="50000" className={selectClass} />
+              <label className="text-xs text-ink-faint mb-1 block">Max (KES)</label>
+              <input
+                type="number"
+                value={maxRent}
+                onChange={(e) => setMaxRent(e.target.value)}
+                placeholder="50000"
+                className="input-base text-sm"
+              />
             </div>
           </div>
         </div>
       </div>
 
-      <button onClick={apply} className="w-full btn-primary mt-8 text-center">
+      <button onClick={apply} className="btn-primary w-full mt-8 justify-center">
         Apply Filters
       </button>
     </aside>

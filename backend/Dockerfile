@@ -1,21 +1,39 @@
-# syntax=docker/dockerfile:1
-FROM node:20-alpine AS builder
-WORKDIR /app
-RUN apk add --no-cache openssl
-COPY package*.json ./
-RUN --network=host npm install
-COPY . .
-RUN npx prisma generate
-RUN npm run build
+# ─── Stage 1: builder ────────────────────────────────────────────────────────
+FROM python:3.12-slim AS builder
 
-FROM node:20-alpine AS production
 WORKDIR /app
-ENV NODE_ENV=production
-RUN apk add --no-cache openssl
-COPY package*.json ./
-RUN --network=host npm install --omit=dev
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY prisma ./prisma
+
+# System deps for argon2 / cryptography builds
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libffi-dev libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+
+# ─── Stage 2: runtime ────────────────────────────────────────────────────────
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+
+# Copy source
+COPY . .
+
+# Generate Prisma Python client
+RUN prisma generate
+
 EXPOSE 3001
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main"]
+
+# gunicorn + UvicornWorker — 4 workers handles ~2k req/s on a 2-core pod
+CMD ["gunicorn", "app.main:app", \
+     "--workers", "4", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--bind", "0.0.0.0:3001", \
+     "--timeout", "60", \
+     "--graceful-timeout", "30", \
+     "--keep-alive", "5", \
+     "--access-logfile", "-"]

@@ -3,7 +3,11 @@
     "allow": [
       "Read(//c/Users/learn/AppData/Local/Temp/**)",
       "Read(//c/Users/learn/AppData/Roaming/**)",
-      "Read(//c/Users/learn/AppData/**)"
+      "Read(//c/Users/learn/AppData/**)",
+      "Bash(grep -v \"^$\")",
+      "Bash(find /home/gatitu/Downloads/nyumbasasa/backend/.venv -name query_engine* -o -name prisma-query-engine*)",
+      "Read(//home/gatitu/.cache/**)",
+      "Bash(git add:*)"
     ]
   }
 }

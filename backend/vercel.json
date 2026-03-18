@@ -1,19 +1,23 @@
 {
   "version": 2,
+  "installCommand": "pip install -r requirements.txt && python -m prisma generate",
   "builds": [
     {
-      "src": "api/index.ts",
-      "use": "@vercel/node",
+      "src": "api/index.py",
+      "use": "@vercel/python",
       "config": {
         "maxDuration": 30,
-        "includeFiles": ["src/**", "prisma/**"]
+        "includeFiles": ["app/**", "prisma/**", "requirements.txt"]
       }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index.ts"
+      "dest": "/api/index.py"
     }
-  ]
+  ],
+  "env": {
+    "PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING": "1"
+  }
 }

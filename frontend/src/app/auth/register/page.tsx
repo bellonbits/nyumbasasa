@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, BadgeCheck } from "lucide-react";
 import { useRegister } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
@@ -26,6 +26,14 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
+
+const inp = (err?: boolean) =>
+  `w-full border rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-400/40 focus:border-brand-400 placeholder:text-ink-faint transition-all ${
+    err ? "border-red-400 focus:ring-red-400/40" : "border-surface-border"
+  }`;
+
+const Err = ({ msg }: { msg?: string }) =>
+  msg ? <p className="text-red-500 text-xs mt-1">{msg}</p> : null;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -49,91 +57,138 @@ export default function RegisterPage() {
     }
   };
 
-  const inputClass = (err?: boolean) =>
-    `input-base ${err ? "border-red-400 focus:ring-red-400" : ""}`;
-
-  const Err = ({ msg }: { msg?: string }) =>
-    msg ? <p className="text-red-500 text-xs mt-1">{msg}</p> : null;
+  const PERKS = [
+    "Go live within 24 hours",
+    "Connect directly via WhatsApp",
+    "Reach all 47 counties",
+  ];
 
   return (
     <div className="min-h-screen flex">
-      {/* Image panel */}
+
+      {/* ── Image panel ────────────────────────────────────── */}
       <div className="hidden lg:flex lg:w-5/12 relative overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=85"
           alt="Kenyan property"
           fill className="object-cover" priority
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 to-brand-700/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1117]/90 to-brand-700/60" />
+
         <div className="relative z-10 flex flex-col justify-between p-12 text-white h-full">
           <Logo size="md" invert />
           <div>
-            <h2 className="font-heading text-3xl font-bold mb-3">List your property,<br />reach thousands.</h2>
-            <p className="text-white/70 text-sm leading-relaxed max-w-xs">
-              Join 2,000+ verified agents listing properties across Kenya. Your listings go live within 24 hours.
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/90 text-xs font-semibold px-4 py-2 rounded-full mb-6">
+              <BadgeCheck className="w-3.5 h-3.5 text-brand-300" />
+              Verified Professionals
+            </div>
+            <h2 className="text-display-sm font-extrabold mb-3 leading-tight">
+              List your property,<br />reach thousands.
+            </h2>
+            <p className="text-white/65 text-sm leading-relaxed max-w-xs mb-6">
+              Join 2,000+ verified agents listing properties across Kenya.
             </p>
+            <ul className="space-y-2.5">
+              {PERKS.map((p) => (
+                <li key={p} className="flex items-center gap-2.5 text-sm text-white/80">
+                  <div className="w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  {p}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
 
-      {/* Form panel */}
-      <div className="flex-1 flex items-center justify-center px-6 py-10 bg-[#FAFAF8] overflow-y-auto">
+      {/* ── Form panel ─────────────────────────────────────── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-10 bg-surface-sage overflow-y-auto">
         <div className="w-full max-w-md">
+
+          {/* Mobile logo */}
           <div className="flex justify-center mb-6 lg:hidden">
             <Logo size="md" />
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h1 className="font-heading text-2xl font-bold text-gray-900 mb-1">Create Agent Account</h1>
-            <p className="text-gray-500 text-sm mb-6">Start listing your properties in minutes</p>
+          {/* Card */}
+          <div className="bg-white rounded-3xl shadow-card p-8">
+            <h1 className="text-display-sm font-extrabold text-ink mb-1">Create Agent Account</h1>
+            <p className="text-ink-muted text-sm mb-6">Start listing your properties in minutes</p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name *</label>
-                <input {...register("name")} placeholder="John Kamau" className={inputClass(!!errors.name)} />
+                <label className="block text-xs font-bold text-ink-muted uppercase tracking-wider mb-1.5">Full Name *</label>
+                <input {...register("name")} placeholder="John Kamau" className={inp(!!errors.name)} />
                 <Err msg={errors.name?.message} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address *</label>
-                <input type="email" {...register("email")} placeholder="john@example.com" className={inputClass(!!errors.email)} />
-                <Err msg={errors.email?.message} />
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-ink-muted uppercase tracking-wider mb-1.5">Email *</label>
+                  <input type="email" {...register("email")} placeholder="john@example.com" className={inp(!!errors.email)} />
+                  <Err msg={errors.email?.message} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-ink-muted uppercase tracking-wider mb-1.5">Phone *</label>
+                  <input type="tel" {...register("phone")} placeholder="0712345678" className={inp(!!errors.phone)} />
+                  <Err msg={errors.phone?.message} />
+                </div>
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone Number *</label>
-                <input type="tel" {...register("phone")} placeholder="0712345678" className={inputClass(!!errors.phone)} />
-                <Err msg={errors.phone?.message} />
+                <label className="block text-xs font-bold text-ink-muted uppercase tracking-wider mb-1.5">Agency / Company Name</label>
+                <input {...register("agencyName")} placeholder="Optional" className={inp()} />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Agency / Company Name</label>
-                <input {...register("agencyName")} placeholder="Optional" className={inputClass()} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password *</label>
+                <label className="block text-xs font-bold text-ink-muted uppercase tracking-wider mb-1.5">Password *</label>
                 <div className="relative">
-                  <input type={showPw ? "text" : "password"} {...register("password")} placeholder="Min 8 characters"
-                    className={`${inputClass(!!errors.password)} pr-11`} />
-                  <button type="button" onClick={() => setShowPw(!showPw)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <input
+                    type={showPw ? "text" : "password"}
+                    {...register("password")}
+                    placeholder="Min 8 characters"
+                    className={`${inp(!!errors.password)} pr-11`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPw(!showPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink transition-colors"
+                  >
                     {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 <Err msg={errors.password?.message} />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password *</label>
-                <input type="password" {...register("confirmPassword")} placeholder="••••••••" className={inputClass(!!errors.confirmPassword)} />
+                <label className="block text-xs font-bold text-ink-muted uppercase tracking-wider mb-1.5">Confirm Password *</label>
+                <input
+                  type="password"
+                  {...register("confirmPassword")}
+                  placeholder="••••••••"
+                  className={inp(!!errors.confirmPassword)}
+                />
                 <Err msg={errors.confirmPassword?.message} />
               </div>
-              <button type="submit" disabled={register_mut.isPending}
-                className="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-60 mt-2">
+
+              <button
+                type="submit"
+                disabled={register_mut.isPending}
+                className="btn-primary w-full justify-center py-3.5 rounded-xl disabled:opacity-60 mt-2"
+              >
                 {register_mut.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                 {register_mut.isPending ? "Creating account..." : "Create Account →"}
               </button>
             </form>
 
-            <p className="text-center text-sm text-gray-500 mt-6">
+            <p className="text-center text-sm text-ink-muted mt-6">
               Already have an account?{" "}
-              <Link href="/auth/login" className="text-brand-500 hover:text-brand-600 font-semibold">Sign in</Link>
+              <Link href="/auth/login" className="text-brand-500 hover:text-brand-600 font-semibold">
+                Sign in
+              </Link>
             </p>
           </div>
         </div>

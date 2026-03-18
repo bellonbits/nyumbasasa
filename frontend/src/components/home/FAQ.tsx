@@ -19,7 +19,7 @@ const FAQS = [
   },
   {
     q: "What is the process of buying a home through your agency?",
-    a: "Homify Kenya currently focuses on rentals. For buying, contact us directly and we'll connect you with our trusted partner estate agents.",
+    a: "Nyumbasasa currently focuses on rentals. For buying, contact us directly and we'll connect you with our trusted partner estate agents.",
   },
   {
     q: "Can you help with mortgage or financing?",
@@ -35,50 +35,59 @@ export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="py-20 bg-surface">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
-          {/* Left */}
+          {/* ── Left ───────────────────────────────────────── */}
           <div>
-            <p className="section-label mb-2">## FAQ</p>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <p className="section-label mb-2">FAQ</p>
+            <h2 className="text-display-sm font-extrabold text-ink mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-gray-500 mb-8">
+            <p className="text-ink-muted mb-8 leading-relaxed">
               Can&apos;t find what you&apos;re looking for? Our support team is happy to help.
             </p>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <p className="font-semibold text-gray-900 mb-1">Still Have Questions?</p>
-              <p className="text-gray-500 text-sm mb-4">Please connect with our support team. We&apos;re here to help.</p>
-              <Link href="/contact" className="btn-outline text-sm inline-flex items-center gap-2">
+            <div className="bg-surface rounded-2xl p-6 border border-surface-border">
+              <p className="font-semibold text-ink mb-1">Still Have Questions?</p>
+              <p className="text-ink-muted text-sm mb-4">
+                Please connect with our support team. We&apos;re here to help.
+              </p>
+              <Link href="/contact" className="btn-outline inline-flex items-center gap-2 text-sm">
                 <MessageCircle className="w-4 h-4" />
                 Contact Us
               </Link>
             </div>
           </div>
 
-          {/* Right – accordion */}
+          {/* ── Right — accordion ──────────────────────────── */}
           <div className="space-y-3">
             {FAQS.map((faq, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+              <div
+                key={i}
+                className={`bg-white rounded-2xl border overflow-hidden transition-all ${
+                  open === i ? "border-brand-200 shadow-card" : "border-surface-border"
+                }`}
+              >
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
                 >
-                  <span className={`text-sm font-semibold ${open === i ? "text-brand-500" : "text-gray-800"}`}>
+                  <span className={`text-sm font-semibold ${open === i ? "text-brand-600" : "text-ink"}`}>
                     {faq.q}
                   </span>
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-surface-muted flex items-center justify-center">
+                  <span className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                    open === i ? "bg-brand-50" : "bg-surface-muted"
+                  }`}>
                     {open === i
                       ? <Minus className="w-4 h-4 text-brand-500" />
-                      : <Plus className="w-4 h-4 text-gray-500" />
+                      : <Plus className="w-4 h-4 text-ink-faint" />
                     }
                   </span>
                 </button>
                 {open === i && (
                   <div className="px-6 pb-5">
-                    <p className="text-gray-500 text-sm leading-relaxed">{faq.a}</p>
+                    <p className="text-ink-muted text-sm leading-relaxed">{faq.a}</p>
                   </div>
                 )}
               </div>

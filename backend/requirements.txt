@@ -1,0 +1,32 @@
+# FastAPI core
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+gunicorn>=23.0.0
+
+# Database
+prisma>=0.15.0
+
+# Auth
+python-jose[cryptography]>=3.3.0
+passlib[argon2]>=1.7.4
+
+# File uploads / Cloudinary
+cloudinary>=1.41.0
+python-multipart>=0.0.17
+Pillow>=11.0.0
+
+# Config & validation
+pydantic-settings>=2.6.0
+pydantic[email]>=2.10.0
+
+# Performance
+orjson>=3.10.0
+
+# Rate limiting
+slowapi>=0.1.9
+
+# HTTP client (health checks)
+httpx>=0.28.0
+
+# Serverless (Vercel)
+mangum>=0.17.0

@@ -4,8 +4,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  provider                    = "prisma-client-py"
+  interface                   = "asyncio"
+  recursive_type_depth        = 5
+  enable_experimental_decimal = true
+  binaryTargets               = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

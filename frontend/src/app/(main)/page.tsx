@@ -8,7 +8,7 @@ import Testimonials    from "@/components/home/Testimonials";
 import BlogTeaser      from "@/components/home/BlogTeaser";
 
 export const metadata: Metadata = {
-  title: "Homify Kenya – Find Affordable Homes in Kenya",
+  title: "Nyumbasasa – Find Affordable Homes in Kenya",
 };
 
 export default function HomePage() {
